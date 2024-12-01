@@ -5,6 +5,10 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ConferenceController;
+use App\Http\Controllers\Auth\RegisterController;
+
+Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register.form');
+Route::post('register', [RegisterController::class, 'register'])->name('register');
 
 Route::get('/', function () {
     return view('welcome');  // Pagrindinis puslapis
