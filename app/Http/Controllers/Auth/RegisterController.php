@@ -2,48 +2,41 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
+use Illuminate\Routing\Controller; // Naudojame šią klasę
 use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Role;
 
 class RegisterController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('guest');  // Tik nesužymėti vartotojai gali pasiekti registraciją
+    }
+
+    // Registracijos forma
     public function showRegistrationForm()
     {
         return view('auth.register');
     }
 
+    // Registracijos apdorojimas
     public function register(Request $request)
     {
-        // Patikriname pateiktus duomenis
-        $validator = Validator::make($request->all(), [
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        // Sukuriame naują vartotoją
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password), // Šifruojame slaptažodį
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
         ]);
 
-        // Priskiriame kliento vaidmenį
-        $role = Role::where('name', 'client')->first(); // Galite pakeisti į savo norimą vaidmenį
-        $user->roles()->attach($role);
+        auth()->login($user);
 
-        // Prisijungiame naudotoją ir nukreipiame į pagrindinį puslapį
-        Auth::login($user);
-
-        return redirect()->route('home');
+        return redirect()->route('client.conferences');
     }
 }

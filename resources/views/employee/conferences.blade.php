@@ -1,18 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee - Conferences</title>
-</head>
-<body>
-    <h1>Employee Conferences</h1>
-    <ul>
-        @foreach ($conferences as $conference)
-            <li>
-                <strong>{{ $conference['name'] }}</strong> - {{ $conference['date'] }}
-            </li>
-        @endforeach
-    </ul>
-</body>
-</html>
+
+
+
+@extends('layouts.app')
+
+@section('content')
+    <h1>Konferencijų sąrašas</h1>
+    
+    @if ($conferences->isEmpty())
+        <p>Šiuo metu nėra planuojamų konferencijų.</p>
+    @else
+        <ul>
+            @foreach ($conferences as $conference)
+                <li>{{ $conference->name }} - {{ $conference->date }}</li>
+            @endforeach
+        </ul>
+    @endif
+@endsection

@@ -2,23 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Conference;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    /**
-     * Rodyti visų konferencijų sąrašą darbuotojui.
-     *
-     * @return \Illuminate\View\View
-     */
+    // Rodome visų konferencijų sąrašą
     public function index()
     {
-        // Čia gali būti loginis kodas, pvz., konferencijų iš duomenų bazės paėmimas
-        $conferences = [
-            ['id' => 1, 'name' => 'Tech Conference', 'date' => '2024-12-05'],
-            ['id' => 2, 'name' => 'Science Summit', 'date' => '2024-12-10'],
-        ];
+        // Gauti visas konferencijas (planuojamas ir įvykusias)
+        $conferences = Conference::all();
 
-        return view('employee.conferences', compact('conferences'));
+        // Grąžiname į Blade šabloną su konferencijų sąrašu
+        return view('employee.conferences.index', compact('conferences'));
+    }
+
+    // Rodyti konkrečią konferenciją ir užsiregistravusius klientus
+    public function show($id)
+    {
+        // Gauti konferenciją pagal ID
+        $conference = Conference::findOrFail($id);
+
+        // Gauti užsiregistravusius vartotojus (klientus)
+        $clients = $conference->users;
+
+        // Grąžinti į Blade šabloną su klientų sąrašu
+        return view('employee.conferences.show', compact('conference', 'clients'));
     }
 }
